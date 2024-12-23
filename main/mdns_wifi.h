@@ -3,5 +3,6 @@
 
 void initialise_mdns(void);
 void init_mdns(void);
+void stop_mdns(void);
 
 #endif

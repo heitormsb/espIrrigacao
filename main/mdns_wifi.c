@@ -89,6 +89,13 @@ void initialise_mdns(void){
     free(hostname);
 }
 
+
+void stop_mdns(void) {
+    mdns_free();
+    ESP_LOGI(TAG, "mDNS finalizado.");
+}
+
+
 /* these strings match mdns_ip_protocol_t enumeration */
 static const char *ip_protocol_str[] = {"V4", "V6", "MAX"};
 

@@ -2,34 +2,34 @@
 	"sources" : 
 	[
 		{
-			"file" : "C:/Users/heito/OneDrive/Documentos/espp/tcp/build/CMakeFiles/bootloader"
+			"file" : "/home/hmsb/espIrrigacao/build/CMakeFiles/bootloader"
 		},
 		{
-			"file" : "C:/Users/heito/OneDrive/Documentos/espp/tcp/build/CMakeFiles/bootloader.rule"
+			"file" : "/home/hmsb/espIrrigacao/build/CMakeFiles/bootloader.rule"
 		},
 		{
-			"file" : "C:/Users/heito/OneDrive/Documentos/espp/tcp/build/CMakeFiles/bootloader-complete.rule"
+			"file" : "/home/hmsb/espIrrigacao/build/CMakeFiles/bootloader-complete.rule"
 		},
 		{
-			"file" : "C:/Users/heito/OneDrive/Documentos/espp/tcp/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule"
+			"file" : "/home/hmsb/espIrrigacao/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule"
 		},
 		{
-			"file" : "C:/Users/heito/OneDrive/Documentos/espp/tcp/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule"
+			"file" : "/home/hmsb/espIrrigacao/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule"
 		},
 		{
-			"file" : "C:/Users/heito/OneDrive/Documentos/espp/tcp/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule"
+			"file" : "/home/hmsb/espIrrigacao/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule"
 		},
 		{
-			"file" : "C:/Users/heito/OneDrive/Documentos/espp/tcp/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule"
+			"file" : "/home/hmsb/espIrrigacao/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule"
 		},
 		{
-			"file" : "C:/Users/heito/OneDrive/Documentos/espp/tcp/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule"
+			"file" : "/home/hmsb/espIrrigacao/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule"
 		},
 		{
-			"file" : "C:/Users/heito/OneDrive/Documentos/espp/tcp/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule"
+			"file" : "/home/hmsb/espIrrigacao/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule"
 		},
 		{
-			"file" : "C:/Users/heito/OneDrive/Documentos/espp/tcp/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule"
+			"file" : "/home/hmsb/espIrrigacao/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule"
 		}
 	],
 	"target" : 
