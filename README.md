@@ -10,6 +10,10 @@ Quando conectado a rede station, coletar TIME do servidor NTP (atualizar a cada 
 
 (analisar) guardar TIME no nvs caso a placa reinicie e não tenha internet (desiscronizado porem so o tempo que ela reinicias)
 
+Conseguir ajustar o TIME e TIMEZONE pelo TCP, conseguindo alterar o horário manualmente, e o TZ para + dinamismo. 
+
+Definir se quer sincronizar ou não o TIME automaticamente, se não atualizar manualmente.
+
 Terá um botão na esp32 que podera resetar as credenciais de rede, apagando o NVS de credencial da rede station e ligando o modo AP
 
 Opção de conetar com bluetooth? Alternar(switch) opção de rede X bluetooth
