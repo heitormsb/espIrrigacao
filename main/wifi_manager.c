@@ -5,8 +5,12 @@
 #include "esp_mac.h"
 #include <string.h>
 #include "mdns_wifi.h"
+#include "tcp_server.h"
+#include "lwip/sockets.h"
 
 static const char* TAG = "WiFiManager";
+
+extern TaskHandle_t TcpHandle;
 
 EventGroupHandle_t s_wifi_event_group = NULL;
 int ap_sta = 0;
@@ -63,8 +67,8 @@ void wifi_event_handler(void* arg,
 //***************************************************************
 //                  FUNÇÃO: from_sta_to_ap
 //***************************************************************
-int from_sta_to_ap(void)
-{
+int from_sta_to_ap(void){
+
     // Vamos trocar do modo STA para AP
     ESP_LOGI(TAG, "## Entering from_sta_to_ap. ap_sta = %d", ap_sta);
 
@@ -144,8 +148,6 @@ int from_ap_to_sta(char *ssid, char *password)
     // Configura as credenciais de STA
     wifi_config_t wifi_config = {
         .sta = {
-            .ssid = {ssid},
-            .password = {password},
             .threshold.authmode = WIFI_AUTH_WPA2_PSK,
             .pmf_cfg = {
                 .capable = true,
@@ -154,8 +156,9 @@ int from_ap_to_sta(char *ssid, char *password)
         },
     };
 
-    strncpy((char*)wifi_config.sta.ssid,(char*)ssid, 32);
-    strncpy((char*)wifi_config.sta.password,(char*)password, 32);
+    strncpy((char *)wifi_config.sta.ssid, ssid, sizeof(wifi_config.sta.ssid) - 1);
+    strncpy((char *)wifi_config.sta.password, password, sizeof(wifi_config.sta.password) - 1);
+
 
     ESP_LOGI(TAG, "Iniciando Wi-Fi em modo STA...");
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
@@ -192,5 +195,6 @@ int from_ap_to_sta(char *ssid, char *password)
     // Indica que agora estamos em modo STA
     ap_sta = 1;
 
+    // se conectou, retorna 1, senão 0
     return (bits & WIFI_CONNECTED_BIT) ? 1 : 0;
 }

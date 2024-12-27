@@ -1,53 +1,21 @@
-| Supported Targets | ESP32 | ESP32-C2 | ESP32-C3 | ESP32-C6 | ESP32-H2 | ESP32-P4 | ESP32-S2 | ESP32-S3 | Linux |
-| ----------------- | ----- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | ----- |
+# EspIrrigação
 
-# Hello World Example
+O usuario recebe a esp32, liga e por default irá iniciar em modo AP (Acontecera verificando o NVS para ver se não tem nenhuma credencial de rede station registrada)
 
-Starts a FreeRTOS task to print "Hello World".
+Ele irá se conectar na rede AP da esp32 e enviar as credenciais da rede station pelo servidor TCP com MDNS "esp32-mdns.local"
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+A esp32 tentará conectar com a rede station, caso sucesso salvar credenciais no NVS, caso erro abrir a rede AP novamente para enviar as credenciais corretas.
 
-## How to use example
+Opção de conetar com bluetooth? Alternar(switch) opção de rede X bluetooth
 
-Follow detailed instructions provided specifically for this example.
+Quando conectado a rede station, coletar TIME do servidor NTP (atualizar a cada N minutos/horas)
 
-Select the instructions depending on Espressif chip installed on your development board:
+Deixar servidor TCP sempre aberto para receber e enviar comando para o APP
 
-- [ESP32 Getting Started Guide](https://docs.espressif.com/projects/esp-idf/en/stable/get-started/index.html)
-- [ESP32-S2 Getting Started Guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/get-started/index.html)
+O APP terá uma mensagem se estiver conectado com o servidor TCP da esp32
 
+APP pode definir frequencia da irrigação que enviará as info para a esp32 que irá guardar no NVS
 
-## Example folder contents
+Terá um botão na esp32 que podera resetar as credenciais de rede, apagando o NVS de credencial da rede station e ligando o modo AP
 
-The project **hello_world** contains one source file in C language [hello_world_main.c](main/hello_world_main.c). The file is located in folder [main](main).
-
-ESP-IDF projects are built using CMake. The project build configuration is contained in `CMakeLists.txt` files that provide set of directives and instructions describing the project's source files and targets (executable, library, or both).
-
-Below is short explanation of remaining files in the project folder.
-
-```
-├── CMakeLists.txt
-├── pytest_hello_world.py      Python script used for automated testing
-├── main
-│   ├── CMakeLists.txt
-│   └── hello_world_main.c
-└── README.md                  This is the file you are currently reading
-```
-
-For more information on structure and contents of ESP-IDF projects, please refer to Section [Build System](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/build-system.html) of the ESP-IDF Programming Guide.
-
-## Troubleshooting
-
-* Program upload failure
-
-    * Hardware connection is not correct: run `idf.py -p PORT monitor`, and reboot your board to see if there are any output logs.
-    * The baud rate for downloading is too high: lower your baud rate in the `menuconfig` menu, and try again.
-
-## Technical support and feedback
-
-Please use the following feedback channels:
-
-* For technical queries, go to the [esp32.com](https://esp32.com/) forum
-* For a feature request or bug report, create a [GitHub issue](https://github.com/espressif/esp-idf/issues)
-
-We will get back to you as soon as possible.
+Se a esp32 estiver na conectado a rede station coletar clima da cidade 

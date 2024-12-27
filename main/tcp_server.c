@@ -8,6 +8,8 @@
 #include <freertos/task.h>
 #include <freertos/queue.h>
 #include "wifi_manager.h"
+#include "nvs_manager.h"
+#include "tcp_wifi_manager.h"
 
 #define PORT CONFIG_EXAMPLE_PORT
 #define KEEPALIVE_IDLE CONFIG_EXAMPLE_KEEPALIVE_IDLE
@@ -20,8 +22,11 @@ TaskHandle_t TcpHandle = NULL;
 
 extern int ap_sta;
 
+extern bool need_switch_to_sta;
+extern bool need_switch_to_ap;
+
 static void handle_gw(char *rx_buffer, int len, int listen_sock) {
-    int verify_sta_status = -1;
+    // int verify_sta_status = -1;
 
     for (int i = 0; i < len; i++) {
         printf("%02X ", (unsigned char)rx_buffer[i]);
@@ -40,46 +45,18 @@ static void handle_gw(char *rx_buffer, int len, int listen_sock) {
     if (password[strlen(password) - 1] == '\n')
         password[strlen(password) - 1] = '\0';
 
-    // strncpy(ssid_g, ssid, sizeof(ssid_g) - 1);
-    // ssid_g[sizeof(ssid_g) - 1] = '\0'; // Garantir null-termination
-
-    // strncpy(password_g, password, sizeof(password_g) - 1);
-    // password_g[sizeof(password_g) - 1] = '\0'; // Garantir null-termination
-
-    
-    // 02X for ssid and password
-    // for (int i = 0; i < strlen(ssid); i++) {
-    //     printf("%02X ", (unsigned char)ssid[i]);
-    // }
-    // printf("\n");
-    // for (int i = 0; i < strlen(password); i++) {
-    //     printf("%02X ", (unsigned char)password[i]);
-    // }
-    // printf("\n");
-
     ESP_LOGI(TAG, "SSID: %s, Password: %s", ssid, password);
+    write_string_to_nvs("storage", "ssid", ssid);
+    write_string_to_nvs("storage", "pass", password);
 
-    // close wifi ap
-    ESP_LOGI(TAG, "Close WiFi AP");
-    // esp_wifi_stop();
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-    verify_sta_status = from_ap_to_sta(ssid, password);
-
-    if (verify_sta_status == 1) {
-        ESP_LOGI(TAG, "STA connected");
-        close(listen_sock);
-        vTaskDelete(TcpHandle);
-    } else {
-        ESP_LOGI(TAG, "STA not connected");
-        from_sta_to_ap();
-    }
+    if (ap_sta == 0)
+        need_switch_to_sta = true;
 
 }
 
 static void do_retransmit(const int sock, const int listen_sock){
     int len;
-    char rx_buffer[128];
+    char rx_buffer[64];
 
     memset(rx_buffer, 0, sizeof(rx_buffer));
 
@@ -96,7 +73,6 @@ static void do_retransmit(const int sock, const int listen_sock){
             if (strcmp(rx_buffer, "0\n") == 0) {
                 ESP_LOGI(TAG, "Received 0, closing connection");
                 close(listen_sock);
-                // close(sock);
                 vTaskDelete(TcpHandle);
             } 
 
@@ -104,24 +80,25 @@ static void do_retransmit(const int sock, const int listen_sock){
                 handle_gw(rx_buffer, len, listen_sock);
             }
             else if (strncmp(rx_buffer, "TIME", 2) == 0) {
-                // get time 
                 time_t now;
                 struct tm timeinfo;
+                char strftime_buf[20];
+
                 time(&now);
                 localtime_r(&now, &timeinfo);
-                char strftime_buf[64];
-                strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-                ESP_LOGI(TAG, "The current date/time in Sao Paulo is: %s", strftime_buf);
+                // format time dd-mm-aaaa hh:mm:ss
+                strftime(strftime_buf, sizeof(strftime_buf), "%d-%m-%Y %H:%M:%S", &timeinfo);
+                ESP_LOGI(TAG, "Current time: %s", strftime_buf);
                 send(sock, strftime_buf, strlen(strftime_buf), 0);
-                
             }
         }
+
     } while (len > 0);
 
 }
 
-void tcp_server_task(void *pvParameters)
-{
+void tcp_server_task(void *pvParameters){
+
     char addr_str[128];
     int addr_family = (int)pvParameters;
     int ip_protocol = 0;

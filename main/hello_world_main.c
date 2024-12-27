@@ -1,67 +1,39 @@
-#include <string.h>
 #include <sys/param.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/queue.h"
-#include "esp_system.h"
 #include "esp_wifi.h"
 #include "esp_event.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "esp_netif.h"
-#include "esp_netif_sntp.h"
-#include "protocol_examples_common.h"
-#include "esp_sntp.h"
+#include <string.h>
 
-#include "lwip/err.h"
-#include "lwip/sockets.h"
-#include "lwip/sys.h"
-#include <lwip/netdb.h>
-
-#include <esp_mac.h>
-
-// #include "wifi_ap.h"
-// #include "wifi_sta.h"
-// #include "test_wifi.h"
-// #include "ap_sta.h"
 #include "wifi_manager.h"
-#include "tcp_server.h"
-// #include "mdns_wifi.h"
+#include "tcp_wifi_manager.h"
+#include "nvs_manager.h"
 
+#include "sntp_server.h"
 
-
-#define PORT                        CONFIG_EXAMPLE_PORT
-#define KEEPALIVE_IDLE              CONFIG_EXAMPLE_KEEPALIVE_IDLE
-#define KEEPALIVE_INTERVAL          CONFIG_EXAMPLE_KEEPALIVE_INTERVAL
-#define KEEPALIVE_COUNT             CONFIG_EXAMPLE_KEEPALIVE_COUNT
-
-static const char *TAG = "example";
-extern TaskHandle_t TcpHandle;
-
-// ssid and password from tcp
-char ssid_g[32] = "";
-char password_g[32] = "";
+static const char *TAG = "main";
 
 extern int ap_sta;
 
 static esp_event_handler_instance_t instance_any_id;
 static esp_event_handler_instance_t instance_got_ip;
 
+extern TaskHandle_t WifiTcpHandle;
+extern bool need_switch_to_sta;
+extern bool need_switch_to_ap;
 
 //***************************************************************
 //                       APP_MAIN
 //***************************************************************
-void app_main(void)
-{
+void app_main(void){
+
     // 1. Inicialização do NVS
-    esp_err_t ret = nvs_flash_init();
-    if (ret == ESP_ERR_NVS_NO_FREE_PAGES ||
-        ret == ESP_ERR_NVS_NEW_VERSION_FOUND)
-    {
-        ESP_ERROR_CHECK(nvs_flash_erase());
-        ret = nvs_flash_init();
-    }
-    ESP_ERROR_CHECK(ret);
+    nvs_init();
+    // nvs_reset();
 
     // 2. Inicialização da pilha de rede
     ESP_ERROR_CHECK(esp_netif_init());
@@ -91,69 +63,66 @@ void app_main(void)
     esp_netif_create_default_wifi_ap();
     esp_netif_create_default_wifi_sta();
 
-    // Exemplo de fluxo: AP -> STA -> AP -> STA
-    ESP_LOGI(TAG, "## Entering from_sta_to_ap (primeira vez).");
-    from_sta_to_ap();
-    xTaskCreate(tcp_server_task, "tcp_server", 4096, (void*)AF_INET, 5, &TcpHandle);
 
+    // 6. Inicialização gerenciador Wi-Fi com TCP
+    xTaskCreate(tcp_wifi_manager, "tcp_wifi_manager", 4096, NULL, 5, &WifiTcpHandle);
+
+    // read wifi credentials from nvs
+    char ssid_nvs[32];
+    char password_nvs[32];
+    bool ssid_read = read_wifi_ssid(ssid_nvs);
+    bool password_read = read_wifi_password(password_nvs);
+
+    if (!ssid_read && !password_read){
+        ESP_LOGI(TAG, "Falha ao ler credenciais wifi do NVS");  
+        need_switch_to_ap = true; 
+    }
+    else{
+        if (strlen(ssid_nvs) > 0 && strlen(password_nvs) > 0){
+            ESP_LOGI(TAG, "Credenciais lidas com sucesso. SSID: %s, Password: %s", ssid_nvs, password_nvs);
+            need_switch_to_sta = true;
+        } else {
+            ESP_LOGI(TAG, "Credenciais Wi-Fi não encontradas no NVS");
+            need_switch_to_ap = true;
+        }
+    }
+
+    // 7. Inicialização do SNTP
+    // setenv("TZ", "BRT3", 1); // Timezone string
+    // tzset();
+    // obtain_time();
+
+    time_t now;
+    struct tm timeinfo;
+    time(&now);
+    localtime_r(&now, &timeinfo);
+    printf("Current time: %s", asctime(&timeinfo));
+
+
+
+
+    //***************************************************************
+    //                  CPU/MEMORY MONITORING
+    // Como ativar:
+    //  Ativar no menuconfig "FreeRTOS" -> "Kernel"
+    //  - FREERTOS_USE_TRACE_FACILITY
+    //  - FREERTOS_GENERATE_RUN_TIME_STATS
+    //  - FREERTOS_USE_STATS_FORMATTING_FUNCTIONS
+    //***************************************************************
+
+    // while (1) {
+    //     static char buffer[1024];
+    //     vTaskGetRunTimeStats(buffer);
+    //     ESP_LOGI(TAG, "\nTask CPU usage:\n%s", buffer);
+
+    //     size_t free_heap = esp_get_free_heap_size();
+    //     ESP_LOGI(TAG, "Free heap size: %u bytes", free_heap);
+
+    //     size_t min_free_heap = esp_get_minimum_free_heap_size();
+    //     ESP_LOGI(TAG, "Minimum free heap size: %u bytes", min_free_heap);
+        
+    //     vTaskDelay(pdMS_TO_TICKS(5000));
+    // }
 
     ESP_LOGI(TAG, "## Fim do exemplo.");
 }
-
-// void app_main(void){
-//     esp_err_t ret = nvs_flash_init();
-//     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-//       ESP_ERROR_CHECK(nvs_flash_erase());
-//       ret = nvs_flash_init();
-//     }
-//     ESP_ERROR_CHECK(ret);
-
-//     // char ssid_g1[32] = "VIVOFIBRA-029A";
-//     // char password_g1[32] = "heitor12";
-//     // wifi_init_station(ssid_g, password_g);
-
-//     int connection_status = 0;
-
-//     ESP_ERROR_CHECK(esp_netif_init());
-//     ESP_ERROR_CHECK(esp_event_loop_create_default());
-//     initialise_mdns();
-    
-//     // xTaskCreate(wifi_ap_task, "wifi_ap", 8192, (void*)AF_INET, 5, &TcpHandle);
-//     // init_ap("null", "null", 0);
-//     xTaskCreate(tcp_server_task, "tcp_server", 4096, (void*)AF_INET, 5, &TcpHandle);
-
-//     // esp_wifi_stop();
-
-//     while (1) {
-//         if (strlen(password_g) > 5) {
-//             ESP_LOGI(TAG, "SSID: %s, Password: %s", ssid_g, password_g);
-//             ESP_LOGI(TAG, "Connect to WiFi station");
-//             connection_status = init_ap(ssid_g, password_g, 1);
-//             printf("Connection status: %d\n", connection_status);
-//             break;
-//         }
-//         vTaskDelay(5000 / portTICK_PERIOD_MS);
-//     }
-
-//     esp_sntp_config_t config = ESP_NETIF_SNTP_DEFAULT_CONFIG("pool.ntp.org");
-//     esp_netif_sntp_init(&config);
-//     if (esp_netif_sntp_sync_wait(pdMS_TO_TICKS(10000)) != ESP_OK) {
-//         printf("Failed to update system time within 10s timeout");
-//     }
-//     setenv("TZ", "GMT+3", 1);
-//     tzset();
-
-//     xTaskCreate(tcp_server_task, "tcp_server", 4096, (void*)AF_INET, 5, &TcpHandle);
-
-
-
-// // #ifdef CONFIG_EXAMPLE_IPV4
-// //     xTaskCreate(tcp_server_task, "tcp_server", 4096, (void*)AF_INET, 5, &TcpHandle);
-// // #endif
-
-
-
-// // #ifdef CONFIG_EXAMPLE_IPV6
-// //     xTaskCreate(tcp_server_task, "tcp_server", 4096, (void*)AF_INET6, 5, &TcpHandle);
-// // #endif
-// }
