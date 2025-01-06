@@ -11,6 +11,7 @@
 static const char* TAG = "WiFiManager";
 
 extern TaskHandle_t TcpHandle;
+extern bool need_switch_to_ap;
 
 EventGroupHandle_t s_wifi_event_group = NULL;
 int ap_sta = 0;
@@ -52,6 +53,7 @@ void wifi_event_handler(void* arg,
         if (s_wifi_event_group) {
             xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
         }
+        need_switch_to_ap = true; // Set flag to switch to AP mode
     }
     else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
         // Quando a Station pega IP

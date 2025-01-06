@@ -1,11 +1,13 @@
-#include <stdio.h>
-#include <string.h>
+// #include <stdio.h>
+// #include <string.h>
 #include <time.h>
 #include <sys/time.h>
 #include "esp_sntp.h"
 #include "esp_log.h"
 
 static const char *TAG = "sntp_server";
+
+TaskHandle_t TimeSyncTaskHandle = NULL;
 
 #define MAX_RETRIES 10
 #define NUM_SERVERS 4
@@ -26,6 +28,12 @@ void time_sync_notification_cb(struct timeval *tv)
 void initialize_sntp(const char *server)
 {
     ESP_LOGI(TAG, "Inicializando SNTP com o servidor: %s", server);
+
+    // Pare o SNTP se já estiver rodando
+    if (esp_sntp_enabled()) {
+        ESP_LOGI(TAG, "Parando cliente SNTP existente...");
+        esp_sntp_stop();
+    }
 
     // Configura o cliente SNTP
     esp_sntp_setoperatingmode(SNTP_OPMODE_POLL);
@@ -76,5 +84,21 @@ void obtain_time()
 
     if (!synced) {
         printf("Failed to synchronize time with all servers\n");
+    }
+}
+
+void periodic_time_sync_task(void *pvParameter){
+    setenv("TZ", "BRT3", 1);
+    tzset();
+
+    while (1) {
+        obtain_time();
+
+        // UBaseType_t watermark = uxTaskGetStackHighWaterMark(NULL);
+        // ESP_LOGI(TAG, "Watermark (bytes left): %u", watermark);
+
+        // rode de 24 em 24 horas
+        // vTaskDelay(24 * 60 * 60 * 1000 / portTICK_PERIOD_MS);
+        vTaskDelay(60 * 1000 / portTICK_PERIOD_MS);
     }
 }

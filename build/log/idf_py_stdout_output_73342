@@ -78,3 +78,40 @@ Set FREERTOS_USE_STATS_FORMATTING_FUNCTIONS
 {"version": 2, "values": {"FREERTOS_USE_STATS_FORMATTING_FUNCTIONS": true, "FREERTOS_VTASKLIST_INCLUDE_COREID": false}, "ranges": {}, "visible": {"FREERTOS_VTASKLIST_INCLUDE_COREID": true}}
 
 Set FREERTOS_GENERATE_RUN_TIME_STATS
+{"version": 2, "values": {"FREERTOS_GENERATE_RUN_TIME_STATS": true, "FREERTOS_RUN_TIME_COUNTER_TYPE_U32": true, "FREERTOS_RUN_TIME_COUNTER_TYPE_U64": false, "FREERTOS_RUN_TIME_STATS_USING_ESP_TIMER": true, "FREERTOS_RUN_TIME_STATS_USING_CPU_CLK": false}, "ranges": {}, "visible": {"component-config-freertos-kernel-configgenerate_run_time_stats-configrun_time_counter_type": true, "FREERTOS_RUN_TIME_COUNTER_TYPE_U32": true, "FREERTOS_RUN_TIME_COUNTER_TYPE_U64": true, "component-config-freertos-port-choose-the-clock-source-for-run-time-stats": true, "FREERTOS_RUN_TIME_STATS_USING_ESP_TIMER": true, "FREERTOS_RUN_TIME_STATS_USING_CPU_CLK": true}}
+
+Set FREERTOS_USE_TRACE_FACILITY
+{"version": 2, "values": {}, "ranges": {}, "visible": {}}
+
+Set FREERTOS_USE_STATS_FORMATTING_FUNCTIONS
+{"version": 2, "values": {}, "ranges": {}, "visible": {}}
+
+Set FREERTOS_GENERATE_RUN_TIME_STATS
+{"version": 2, "values": {"FREERTOS_USE_TRACE_FACILITY": false, "FREERTOS_GENERATE_RUN_TIME_STATS": false}, "ranges": {}, "visible": {"FREERTOS_USE_STATS_FORMATTING_FUNCTIONS": false, "FREERTOS_VTASKLIST_INCLUDE_COREID": false, "component-config-freertos-kernel-configgenerate_run_time_stats-configrun_time_counter_type": false, "FREERTOS_RUN_TIME_COUNTER_TYPE_U32": false, "FREERTOS_RUN_TIME_COUNTER_TYPE_U64": false, "component-config-freertos-port-choose-the-clock-source-for-run-time-stats": false, "FREERTOS_RUN_TIME_STATS_USING_ESP_TIMER": false, "FREERTOS_RUN_TIME_STATS_USING_CPU_CLK": false}}
+
+{"version": 2, "values": {}, "ranges": {}, "visible": {}}
+
+{"version": 2, "values": {}, "ranges": {}, "visible": {}}
+
+Set FREERTOS_USE_TRACE_FACILITY
+{"version": 2, "values": {"FREERTOS_USE_TRACE_FACILITY": true, "FREERTOS_USE_STATS_FORMATTING_FUNCTIONS": false}, "ranges": {}, "visible": {"FREERTOS_USE_STATS_FORMATTING_FUNCTIONS": true}}
+
+Set FREERTOS_USE_STATS_FORMATTING_FUNCTIONS
+{"version": 2, "values": {"FREERTOS_USE_STATS_FORMATTING_FUNCTIONS": true, "FREERTOS_VTASKLIST_INCLUDE_COREID": false}, "ranges": {}, "visible": {"FREERTOS_VTASKLIST_INCLUDE_COREID": true}}
+
+Set FREERTOS_GENERATE_RUN_TIME_STATS
+{"version": 2, "values": {"FREERTOS_GENERATE_RUN_TIME_STATS": true, "FREERTOS_RUN_TIME_COUNTER_TYPE_U32": true, "FREERTOS_RUN_TIME_COUNTER_TYPE_U64": false, "FREERTOS_RUN_TIME_STATS_USING_ESP_TIMER": true, "FREERTOS_RUN_TIME_STATS_USING_CPU_CLK": false}, "ranges": {}, "visible": {"component-config-freertos-kernel-configgenerate_run_time_stats-configrun_time_counter_type": true, "FREERTOS_RUN_TIME_COUNTER_TYPE_U32": true, "FREERTOS_RUN_TIME_COUNTER_TYPE_U64": true, "component-config-freertos-port-choose-the-clock-source-for-run-time-stats": true, "FREERTOS_RUN_TIME_STATS_USING_ESP_TIMER": true, "FREERTOS_RUN_TIME_STATS_USING_CPU_CLK": true}}
+
+Set FREERTOS_USE_TRACE_FACILITY
+{"version": 2, "values": {}, "ranges": {}, "visible": {}}
+
+Set FREERTOS_USE_STATS_FORMATTING_FUNCTIONS
+{"version": 2, "values": {}, "ranges": {}, "visible": {}}
+
+Set FREERTOS_GENERATE_RUN_TIME_STATS
+{"version": 2, "values": {"FREERTOS_USE_TRACE_FACILITY": false, "FREERTOS_GENERATE_RUN_TIME_STATS": false}, "ranges": {}, "visible": {"FREERTOS_USE_STATS_FORMATTING_FUNCTIONS": false, "FREERTOS_VTASKLIST_INCLUDE_COREID": false, "component-config-freertos-kernel-configgenerate_run_time_stats-configrun_time_counter_type": false, "FREERTOS_RUN_TIME_COUNTER_TYPE_U32": false, "FREERTOS_RUN_TIME_COUNTER_TYPE_U64": false, "component-config-freertos-port-choose-the-clock-source-for-run-time-stats": false, "FREERTOS_RUN_TIME_STATS_USING_ESP_TIMER": false, "FREERTOS_RUN_TIME_STATS_USING_CPU_CLK": false}}
+
+{"version": 2, "values": {}, "ranges": {}, "visible": {}}
+
+{"version": 2, "values": {}, "ranges": {}, "visible": {}}
+

@@ -1,7 +1,7 @@
 {
     "version":            "1.1",
     "project_name":       "tcp",
-    "project_version":    "1b7f543-dirty",
+    "project_version":    "71c3c42-dirty",
     "project_path":       "/home/hmsb/espIrrigacao",
     "idf_path":           "/home/hmsb/esp/v5.3.2/esp-idf",
     "build_dir":          "/home/hmsb/espIrrigacao/build",
